@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="n8nAPI.APIWrapper/n8nAPI.APIWrapper.csproj" Id="df34886c-7803-4b33-8da6-3a51fb913d90" />
+  <Project Path="n8nAPI/n8nAPI.csproj" />
+</Solution>
