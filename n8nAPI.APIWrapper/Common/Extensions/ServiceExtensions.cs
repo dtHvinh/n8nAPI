@@ -14,6 +14,9 @@ public static class ServiceExtensions
         services.AddHttpClient(Name.N8nHttpClientName, cf =>
         {
             cf.BaseAddress = new Uri(config.BaseUrl);
+            cf.DefaultRequestHeaders.Add(Headers.XN8nApiKey, config.ApiKey);
         });
+
+        return services;
     }
 }

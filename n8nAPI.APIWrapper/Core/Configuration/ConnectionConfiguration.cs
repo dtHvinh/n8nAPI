@@ -2,6 +2,6 @@
 
 public class ConnectionConfiguration
 {
-    public string BaseUrl { get; init; } = default!;
-    public string ApiKey { get; init; } = default!;
+    public string BaseUrl { get; set; } = default!;
+    public string ApiKey { get; set; } = default!;
 }
