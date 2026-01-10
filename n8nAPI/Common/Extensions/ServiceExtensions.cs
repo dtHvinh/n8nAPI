@@ -3,6 +3,7 @@ using n8nAPI.Common.Base;
 using n8nAPI.Common.Configurations;
 using n8nAPI.Common.Constants;
 using System.Reflection;
+using System.Threading.RateLimiting;
 
 namespace n8nAPI.Common.Extensions;
 
@@ -35,18 +36,33 @@ public static class ServiceExtensions
         {
             cf.OnRejected += OnRateLimiterRejected;
 
+            cf.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+            {
+                var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+                return RateLimitPartition.GetTokenBucketLimiter(ip, _ =>
+                    new TokenBucketRateLimiterOptions
+                    {
+                        TokenLimit = 100,
+                        TokensPerPeriod = 25,
+                        ReplenishmentPeriod = TimeSpan.FromSeconds(10),
+                        AutoReplenishment = true,
+                        QueueLimit = 0
+                    });
+            });
+
             cf.AddFixedWindowLimiter(RateLimiters.FixedWindowLimiter, options =>
             {
                 options.PermitLimit = 2;
                 options.Window = TimeSpan.FromMinutes(1);
-                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 options.QueueLimit = 0;
             });
 
             cf.AddTokenBucketLimiter(RateLimiters.TokenBucketLimiter, options =>
             {
                 options.TokenLimit = 100;
-                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 options.QueueLimit = 0;
                 options.ReplenishmentPeriod = TimeSpan.FromSeconds(30);
                 options.TokensPerPeriod = 50;
@@ -57,7 +73,7 @@ public static class ServiceExtensions
             {
                 options.PermitLimit = 2;
                 options.Window = TimeSpan.FromMinutes(1);
-                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 options.QueueLimit = 0;
             });
         });
