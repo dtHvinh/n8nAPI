@@ -1,5 +1,7 @@
-﻿using n8nAPI.Common.Base;
+﻿using Microsoft.AspNetCore.RateLimiting;
+using n8nAPI.Common.Base;
 using n8nAPI.Common.Configurations;
+using n8nAPI.Common.Constants;
 using System.Reflection;
 
 namespace n8nAPI.Common.Extensions;
@@ -27,6 +29,42 @@ public static class ServiceExtensions
         return services;
     }
 
+    public static IServiceCollection RegisterRateLimiter(this IServiceCollection services)
+    {
+        services.AddRateLimiter(cf =>
+        {
+            cf.OnRejected += OnRateLimiterRejected;
+
+            cf.AddFixedWindowLimiter(RateLimiters.FixedWindowLimiter, options =>
+            {
+                options.PermitLimit = 2;
+                options.Window = TimeSpan.FromMinutes(1);
+                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 0;
+            });
+
+            cf.AddTokenBucketLimiter(RateLimiters.TokenBucketLimiter, options =>
+            {
+                options.TokenLimit = 100;
+                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 0;
+                options.ReplenishmentPeriod = TimeSpan.FromSeconds(30);
+                options.TokensPerPeriod = 50;
+                options.AutoReplenishment = true;
+            });
+
+            cf.AddFixedWindowLimiter(RateLimiters.TestLimiter, options =>
+            {
+                options.PermitLimit = 2;
+                options.Window = TimeSpan.FromMinutes(1);
+                options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 0;
+            });
+        });
+
+        return services;
+    }
+
     private static List<Type> GetEndpointTypes()
     {
         var assembly = Assembly.GetAssembly(typeof(ServiceExtensions))
@@ -42,5 +80,12 @@ public static class ServiceExtensions
     {
         if (Activator.CreateInstance(type) is EndpointBase ep)
             ep.RegisterEndpoint(globalRoute);
+    }
+
+    private static async ValueTask OnRateLimiterRejected(OnRejectedContext context, CancellationToken token)
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.Headers.RetryAfter = "60";
+        await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", token);
     }
 }

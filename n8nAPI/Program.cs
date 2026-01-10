@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.RegisterServices();
+builder.Services.RegisterRateLimiter();
 
 var app = builder.Build();
 
@@ -22,5 +23,6 @@ app.RegisterEndpoints(cf =>
 {
     cf.Version = 1;
 });
+app.UseRateLimiter();
 
 await app.RunAsync();

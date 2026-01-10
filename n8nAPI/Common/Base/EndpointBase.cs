@@ -1,6 +1,9 @@
-﻿namespace n8nAPI.Common.Base;
+﻿using n8nAPI.Common.Extensions;
+using n8nAPI.Common.Interfaces;
 
-public abstract class EndpointBase
+namespace n8nAPI.Common.Base;
+
+public abstract partial class EndpointBase
 {
     protected RouteGroupBuilder Group { get; set; } = default!;
 
@@ -22,44 +25,49 @@ public abstract class EndpointBase
         return this;
     }
 
-    public EndpointBase MapGet(string pattern, Delegate handler, Action<EndpointMetadata> metadataConfig)
+    public EndpointBase MapGet(string pattern,
+                               Delegate handler,
+                               Action<EndpointMetadataEnricher> metadataConfig = default!,
+                               Action<EndpointServiceEnricher> serviceConfig = default!)
     {
-        EndpointMetadata metadata = new();
-        metadataConfig(metadata);
 
-        metadata.WithMetadata(Group.MapGet(pattern, handler));
-
+        Map(HttpMethod.Get, pattern, handler, metadataConfig, serviceConfig);
         return this;
     }
 
-    public class EndpointMetadata
+    private void Map(HttpMethod method,
+                     string pattern,
+                     Delegate handler,
+                     Action<EndpointMetadataEnricher> metadataConfig = default!,
+                     Action<EndpointServiceEnricher> serviceConfig = default!)
     {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public Type ProducesType { get; set; } = typeof(void);
+        EndpointMetadataEnricher metadata = new();
+        metadataConfig(metadata);
 
-        public RouteHandlerBuilder WithMetadata(RouteHandlerBuilder builder)
+        EndpointServiceEnricher service = new();
+        serviceConfig(service);
+
+        IEndpointEnricher[] enrichers = [metadata, service];
+
+        switch (method.Method)
         {
-            if (!string.IsNullOrEmpty(Name))
-            {
-                builder.WithName(Name);
-            }
-            if (!string.IsNullOrEmpty(Description))
-            {
-                builder.WithDescription(Description);
-            }
-            if (ProducesType != typeof(void))
-            {
-                var method = typeof(OpenApiRouteHandlerBuilderExtensions).GetMethods()
-                    .FirstOrDefault(m => m.Name == "Produces" && m.IsGenericMethodDefinition && m.GetParameters().Length == 1);
-                if (method != null)
-                {
-                    var genericMethod = method.MakeGenericMethod(ProducesType);
-                    genericMethod.Invoke(null, new object[] { builder });
-                }
-            }
-
-            return builder;
+            case "GET":
+                Group.MapGet(pattern, handler).EnrichEndpoint(enrichers);
+                break;
+            case "POST":
+                Group.MapPost(pattern, handler).EnrichEndpoint(enrichers);
+                break;
+            case "PUT":
+                Group.MapPut(pattern, handler).EnrichEndpoint(enrichers);
+                break;
+            case "DELETE":
+                Group.MapDelete(pattern, handler).EnrichEndpoint(enrichers);
+                break;
+            case "PATCH":
+                Group.MapPatch(pattern, handler).EnrichEndpoint(enrichers);
+                break;
+            default:
+                throw new NotSupportedException($"HTTP method {method} is not supported.");
         }
     }
 }

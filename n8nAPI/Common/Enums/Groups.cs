@@ -3,4 +3,5 @@
 public static class Groups
 {
     public const string System = "/";
+    public const string Test = "/test";
 }

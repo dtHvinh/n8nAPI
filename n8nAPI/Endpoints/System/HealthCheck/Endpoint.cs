@@ -12,11 +12,16 @@ public class Endpoint : EndpointBase
         WithGroup(endpointRouteBuilder.MapGroup(Groups.System));
         AllowAnonymous();
 
-        MapGet("/health", HandleGetHealth, cf =>
+        MapGet("/health", HandleGetHealth,
+            mf =>
         {
-            cf.Name = "Health check";
-            cf.Description = "Get the app health check";
-            cf.ProducesType = typeof(HealthCheckResponse);
+            mf.Name = "Health check";
+            mf.Description = "Get the app health check";
+            mf.ProducesType = typeof(HealthCheckResponse);
+        },
+            sf =>
+        {
+
         });
 
         return endpointRouteBuilder;
