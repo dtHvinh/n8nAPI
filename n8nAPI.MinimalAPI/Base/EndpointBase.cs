@@ -5,71 +5,9 @@ using n8nAPI.MinimalAPI.Interfaces;
 
 namespace n8nAPI.MinimalAPI.Base;
 
-public abstract partial class EndpointBase
+public abstract partial class EndpointBase : EndpointBuilderBase
 {
-    protected RouteGroupBuilder _group { get; set; } = default!;
-
     public abstract IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder routeBuilder);
-
-    public EndpointBase Group(RouteGroupBuilder group)
-    {
-        GuardedEndpointBase.IsAvailableToSetGroup(_group);
-        _group = group;
-
-        return this;
-    }
-
-    public EndpointBase Group(EndpointBase group)
-    {
-        GuardedEndpointBase.IsAvailableToSetGroup(_group);
-        _group = group._group;
-
-        return this;
-    }
-
-    public EndpointBase Group<TGroup>(IEndpointRouteBuilder routeBuilder) where TGroup : GroupBase
-    {
-        GuardedEndpointBase.IsAvailableToSetGroup(_group);
-        TGroup group = Activator.CreateInstance<TGroup>();
-
-        _group = group.CreateGroup(routeBuilder);
-
-        return this;
-    }
-
-    public EndpointBase WithMetadata(Action<EndpointMetadataEnricher> metadata)
-    {
-        EndpointMetadataEnricher metadataEnricher = new();
-        metadata(metadataEnricher);
-
-        _group.EnrichEndpoint(metadataEnricher);
-        return this;
-    }
-
-    public EndpointBase WithService(Action<EndpointServiceEnricher> service)
-    {
-        EndpointServiceEnricher serviceEnricher = new();
-        service(serviceEnricher);
-
-        _group.EnrichEndpoint(serviceEnricher);
-        return this;
-    }
-
-    public EndpointBase EnrichEndpoint(params IEndpointEnricher[] enrichers)
-    {
-        _group.EnrichEndpoint(enrichers);
-        return this;
-    }
-
-    /// <summary>
-    /// Allow anonymous access to this endpoint
-    /// </summary>
-    /// <returns>Self</returns>
-    public EndpointBase AllowAnonymous()
-    {
-        _group.AllowAnonymous();
-        return this;
-    }
 
     public EndpointBase MapGet(string pattern,
                                Delegate handler,
@@ -78,6 +16,42 @@ public abstract partial class EndpointBase
     {
 
         Map(HttpMethod.Get, pattern, handler, metadataConfig, serviceConfig);
+        return this;
+    }
+
+    public EndpointBase MapPost(string pattern,
+                                Delegate handler,
+                                Action<EndpointMetadataEnricher> metadataConfig = default!,
+                                Action<EndpointServiceEnricher> serviceConfig = default!)
+    {
+        Map(HttpMethod.Post, pattern, handler, metadataConfig, serviceConfig);
+        return this;
+    }
+
+    public EndpointBase MapPut(string pattern,
+                               Delegate handler,
+                               Action<EndpointMetadataEnricher> metadataConfig = default!,
+                               Action<EndpointServiceEnricher> serviceConfig = default!)
+    {
+        Map(HttpMethod.Put, pattern, handler, metadataConfig, serviceConfig);
+        return this;
+    }
+
+    public EndpointBase MapDelete(string pattern,
+                                  Delegate handler,
+                                  Action<EndpointMetadataEnricher> metadataConfig = default!,
+                                  Action<EndpointServiceEnricher> serviceConfig = default!)
+    {
+        Map(HttpMethod.Delete, pattern, handler, metadataConfig, serviceConfig);
+        return this;
+    }
+
+    public EndpointBase MapPatch(string pattern,
+                                 Delegate handler,
+                                 Action<EndpointMetadataEnricher> metadataConfig = default!,
+                                 Action<EndpointServiceEnricher> serviceConfig = default!)
+    {
+        Map(HttpMethod.Patch, pattern, handler, metadataConfig, serviceConfig);
         return this;
     }
 
@@ -117,14 +91,4 @@ public abstract partial class EndpointBase
         }
     }
 
-    private static class GuardedEndpointBase
-    {
-        public static void IsAvailableToSetGroup(RouteGroupBuilder group)
-        {
-            if (group == null)
-                return;
-
-            throw new InvalidOperationException("Group has already been set and cannot be modified.");
-        }
-    }
 }
