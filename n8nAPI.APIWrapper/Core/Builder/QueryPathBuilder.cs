@@ -31,6 +31,13 @@ public sealed class QueryPathBuilder
     {
         private QueryCategory _category;
         private readonly QueryPathBuilderSegment _segment = segment;
+        public int Version { get; set; } = 1;
+
+        public QueryPathBuilderStarter WithApiVersion(int version)
+        {
+            Version = version;
+            return this;
+        }
 
         public QueryPathBuilderSegment WithCategory(QueryCategory category)
         {
@@ -40,7 +47,7 @@ public sealed class QueryPathBuilder
 
         public string GetPath()
         {
-            return _category.ToQueryPath();
+            return $"api/v{Version}/{_category.ToQueryPath()}";
         }
     }
 

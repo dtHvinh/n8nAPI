@@ -24,6 +24,13 @@ public static class ServiceExtensions
         return routeBuilder;
     }
 
+    public static IConfigurationBuilder AddAdditionConfigurations(
+        this IConfigurationBuilder configuration)
+    {
+        configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
+        return configuration;
+    }
+
     public static IServiceCollection RegisterServices(
         this IServiceCollection services)
     {

@@ -1,6 +1,6 @@
-﻿using n8nAPI.Common.Base;
-using n8nAPI.Common.Constants;
+﻿using n8nAPI.Common.Constants;
 using n8nAPI.Common.Enums;
+using n8nAPI.MinimalAPI.Base;
 
 namespace n8nAPI.Endpoints.Workflows;
 
@@ -18,10 +18,5 @@ public class WorkflowGroup : GroupBase
         });
 
         return _group;
-    }
-
-    public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder routeBuilder)
-    {
-        throw new NotImplementedException();
     }
 }

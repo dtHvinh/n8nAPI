@@ -23,7 +23,7 @@ public class ServiceExtensionsTest
         Assert.NotNull(services.FirstOrDefault(e => e.ServiceType == typeof(IHttpClientFactory)));
 
         IHttpClientFactory factory = services.BuildServiceProvider().GetRequiredService<IHttpClientFactory>();
-        HttpClient client = factory.CreateClient(Name.N8nHttpClientName);
+        HttpClient client = factory.CreateClient(Names.N8nHttpClientName);
 
         Assert.Equal(baseUrl, client.BaseAddress?.ToString());
         Assert.True(client.DefaultRequestHeaders.Contains(Headers.XN8nApiKey));

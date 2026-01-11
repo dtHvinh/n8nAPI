@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using n8nAPI.APIWrapper.Common.Constants;
+using n8nAPI.APIWrapper.Core.Client;
 using n8nAPI.APIWrapper.Core.Configuration;
 
 namespace n8nAPI.APIWrapper.Common.Extensions;
@@ -11,7 +12,9 @@ public static class ServiceExtensions
         ConnectionConfiguration config = new();
         configuration.Invoke(config);
 
-        services.AddHttpClient(Name.N8nHttpClientName, cf =>
+        services.AddSingleton<WorkflowClient>();
+
+        services.AddHttpClient(Names.N8nHttpClientName, cf =>
         {
             cf.BaseAddress = new Uri(config.BaseUrl);
             cf.DefaultRequestHeaders.Add(Headers.XN8nApiKey, config.ApiKey);
