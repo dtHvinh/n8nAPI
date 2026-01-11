@@ -1,6 +1,7 @@
-﻿using n8nAPI.Common.Interfaces;
+﻿using Microsoft.AspNetCore.Builder;
+using n8nAPI.MinimalAPI.Interfaces;
 
-namespace n8nAPI.Common.Base;
+namespace n8nAPI.MinimalAPI.Base;
 
 public class EndpointServiceEnricher : IEndpointEnricher
 {

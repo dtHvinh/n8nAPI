@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.RateLimiting;
-using n8nAPI.Common.Base;
 using n8nAPI.Common.Configurations;
 using n8nAPI.Common.Constants;
+using n8nAPI.MinimalAPI.Base;
 using System.Reflection;
 using System.Threading.RateLimiting;
 

@@ -1,5 +1,5 @@
-﻿using n8nAPI.Common.Base;
-using n8nAPI.Common.Enums;
+﻿using n8nAPI.Common.Enums;
+using n8nAPI.MinimalAPI.Base;
 
 namespace n8nAPI.Endpoints.System.HealthCheck;
 
@@ -7,9 +7,9 @@ public class Endpoint : EndpointBase
 {
     private static readonly DateTime _siteStartTime = DateTime.UtcNow;
 
-    public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
+    public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder routeBuilder)
     {
-        Group(endpointRouteBuilder.MapGroup(Groups.System));
+        Group(routeBuilder.MapGroup(Groups.System));
         AllowAnonymous();
 
         MapGet("/health", HandleGetHealth,
@@ -24,7 +24,7 @@ public class Endpoint : EndpointBase
 
         });
 
-        return endpointRouteBuilder;
+        return routeBuilder;
     }
 
     public static IResult HandleGetHealth()

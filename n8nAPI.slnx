@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="n8nAPI.APIWrapper.Test/n8nAPI.APIWrapper.Test.csproj" Id="8cd080c4-18d6-4764-ac69-ef189297d4df" />
   <Project Path="n8nAPI.APIWrapper/n8nAPI.APIWrapper.csproj" Id="df34886c-7803-4b33-8da6-3a51fb913d90" />
+  <Project Path="n8nAPI.MinimalAPI/n8nAPI.MinimalAPI.csproj" Id="a1cf9671-ba44-410e-9299-44722678c630" />
   <Project Path="n8nAPI/n8nAPI.csproj" />
 </Solution>

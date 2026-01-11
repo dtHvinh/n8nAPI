@@ -1,7 +1,9 @@
-﻿using n8nAPI.Common.Extensions;
-using n8nAPI.Common.Interfaces;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using n8nAPI.MinimalAPI.Extensions;
+using n8nAPI.MinimalAPI.Interfaces;
 
-namespace n8nAPI.Common.Base;
+namespace n8nAPI.MinimalAPI.Base;
 
 public abstract partial class EndpointBase
 {

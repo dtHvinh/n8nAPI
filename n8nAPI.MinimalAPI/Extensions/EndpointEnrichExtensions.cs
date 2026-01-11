@@ -1,6 +1,7 @@
-﻿using n8nAPI.Common.Interfaces;
+﻿using Microsoft.AspNetCore.Builder;
+using n8nAPI.MinimalAPI.Interfaces;
 
-namespace n8nAPI.Common.Extensions;
+namespace n8nAPI.MinimalAPI.Extensions;
 
 public static class EndpointEnrichExtensions
 {
