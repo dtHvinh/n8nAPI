@@ -9,7 +9,7 @@ public class EndpointMetadataEnricher : IEndpointEnricher
     public Type ProducesType { get; set; } = typeof(void);
     public string[] Tags { get; set; } = default!;
 
-    public RouteHandlerBuilder Enrich(RouteHandlerBuilder builder)
+    public IEndpointConventionBuilder Enrich(IEndpointConventionBuilder builder)
     {
         if (!string.IsNullOrEmpty(Name))
         {

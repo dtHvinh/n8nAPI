@@ -9,7 +9,7 @@ public class Endpoint : EndpointBase
 
     public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        WithGroup(endpointRouteBuilder.MapGroup(Groups.System));
+        Group(endpointRouteBuilder.MapGroup(Groups.System));
         AllowAnonymous();
 
         MapGet("/health", HandleGetHealth,

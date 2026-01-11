@@ -6,7 +6,7 @@ public class EndpointServiceEnricher : IEndpointEnricher
 {
     public string RateLimiterPolicyName { get; set; } = string.Empty;
 
-    public RouteHandlerBuilder Enrich(RouteHandlerBuilder builder)
+    public IEndpointConventionBuilder Enrich(IEndpointConventionBuilder builder)
     {
         if (!string.IsNullOrEmpty(RateLimiterPolicyName))
         {

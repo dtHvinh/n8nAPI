@@ -7,9 +7,9 @@ namespace n8nAPI.Endpoints.System.Test;
 
 public class Endpoint : EndpointBase
 {
-    public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
+    public override IEndpointRouteBuilder RegisterEndpoint(IEndpointRouteBuilder routeBuilder)
     {
-        WithGroup(endpointRouteBuilder.MapGroup(Groups.Test));
+        Group(routeBuilder.MapGroup(Groups.Test));
 
         MapGet("/rate-limiter", TestRateLimiter,
             cf =>
@@ -23,7 +23,7 @@ public class Endpoint : EndpointBase
                 sf.RateLimiterPolicyName = RateLimiters.TestLimiter;
             });
 
-        return endpointRouteBuilder;
+        return routeBuilder;
     }
 
     public static IResult TestRateLimiter()

@@ -2,5 +2,5 @@
 
 public interface IEndpointEnricher
 {
-    RouteHandlerBuilder Enrich(RouteHandlerBuilder builder);
+    IEndpointConventionBuilder Enrich(IEndpointConventionBuilder builder);
 }

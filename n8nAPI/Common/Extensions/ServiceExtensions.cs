@@ -89,6 +89,7 @@ public static class ServiceExtensions
         return [.. assembly.GetTypes()
             .Where(t => t.IsClass
                      && !t.IsAbstract
+                     && !t.Name.EndsWith("Group") // TODO: Better way to exclude group classes
                      && typeof(EndpointBase).IsAssignableFrom(t))];
     }
 

@@ -4,4 +4,5 @@ public static class Groups
 {
     public const string System = "/";
     public const string Test = "/test";
+    public const string Workflow = "/workflows";
 }
